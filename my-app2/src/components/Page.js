@@ -1,14 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-
+import PhotoPage from './PhotoPage';
+import {Link, Switch,Route,BrowserRouter} from 'react-router-dom'
 export class Page extends React.Component {
+      state = {
+        clikedPhoto: false,
+      }
   onBtnClick = e => {
     const year = +e.currentTarget.innerText
     this.props.getPhotos(year) 
   }
+  onCheckClick= e => {
+    this.setState({clikedPhoto:true})
+  }
   renderTemplate = () => {
     const { photos, isLoading, error } = this.props
-
     if (error) {
       return <p className="error">Во время загрузки фото произошла ошибка</p>
     }
@@ -16,13 +22,17 @@ export class Page extends React.Component {
     if (isLoading) {
       return <p>Загрузка...</p>
     } else {
-      return photos.map((entry, index) => ( 
-        <div key={index} className="photo">
+      return photos.map((photo, index) => ( 
+        <div key={photo} className="photo">
           <p>
-            <img src={entry.sizes[0].url} alt="" />
+            <img src={photo.sizes[0].url} alt="" onClick={this.onCheckClick}/>
           </p>
-          <p>{entry.likes.count} ❤</p>
+          <p>{photo.likes.count} ❤</p>
+           {
+             this.state.clikedPhoto ?  <PhotoPage  url={photo.sizes[4].url}/>: ""
+           }
         </div>
+        
       ))
     }
   }
